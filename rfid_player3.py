@@ -92,14 +92,14 @@ while continue_reading:
                         # except Exception as e:
                             # logging.warning(f"Erreur volume (amixer) : {e}")
 
-                        # Lecture avec mpg123
-                        logging.info("▶️ Appel à mpg123")
+                        # Lecture avec mpv
+                        logging.info("▶️ Appel à mpv")
                         audio_process = subprocess.Popen(
-                            ["mpg123", audio_path],
+                            ["mpv", "--no-video", "--no-terminal", "--really-quiet", "--", audio_path],
                             stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL
                         )
-                        logging.info("🎧 mpg123 lancé")
+                        logging.info("🎧 mpv lancé")
 
                     else:
                         logging.warning(f"Fichier introuvable : {audio_path}")
@@ -112,4 +112,3 @@ while continue_reading:
                     if status_check != reader.MI_OK:
                         break
                     time.sleep(0.1)
-
