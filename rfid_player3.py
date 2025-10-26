@@ -1,3 +1,4 @@
+import json
 import signal
 import time
 import os
@@ -35,13 +36,14 @@ continue_reading = True
 
 logging.info("🎬 Script RFID démarré")
 
-UID_TO_TRACK = {
-    "5DCF3F1FB2": "N_est-ce-pas-rossi.mp3",
-    "ECDA401F69": "La_Reine_des_Neiges_-_Je_voudrais_un_bonhomme_de_neige_I_Disney.mp3",
-    # ... autres cartes ...
-}
+UID_TO_TRACK = json.load(open("UID_TO_TRACK.json"))
 
 UID_STOP = "A079401F86"
+
+# check that UID_STOP is not in UID_TO_TRACK
+if UID_STOP in UID_TO_TRACK.values():
+    logging.error("❌ UID_STOP est présent dans UID_TO_TRACK.json, veuillez le retirer.")
+    exit(1)
 
 audio_folder = "/home/yassin/Music"
 
