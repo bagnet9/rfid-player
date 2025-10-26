@@ -4,6 +4,9 @@ import time
 import os
 import subprocess
 import logging
+from mfrc522 import MFRC522
+import RPi.GPIO as GPIO
+
 # 🔊 Config log
 logging.basicConfig(
     filename="rfid_player.log",
@@ -14,18 +17,6 @@ logging.basicConfig(
 logging.info("🔍 DÉBUT DU SCRIPT PYTHON")
 
 logging.info("🚀 Script RFID lancé via systemd")
-try:
-    import RPi.GPIO as GPIO
-    GPIO.setwarnings(False)
-    logging.info("✅ Import RPi.GPIO réussi")
-except Exception as e:
-    logging.error(f"❌ Erreur import RPi.GPIO : {e}")
-
-try:
-    from mfrc522 import MFRC522
-    logging.info("✅ Import MFRC522 réussi")
-except Exception as e:
-    logging.error(f"❌ Erreur import MFRC522 : {e}")
 
 # check if mpv is installed
 if not subprocess.run(["which", "mpv"], stdout=subprocess.DEVNULL).returncode == 0:
