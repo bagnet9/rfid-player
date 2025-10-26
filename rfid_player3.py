@@ -3,6 +3,13 @@ import time
 import os
 import subprocess
 import logging
+# 🔊 Config log
+logging.basicConfig(
+    filename="/home/yassin/rfid_player.log",
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
+
 logging.info("🔍 DÉBUT DU SCRIPT PYTHON")
 
 logging.info("🚀 Script RFID lancé via systemd")
@@ -19,15 +26,12 @@ try:
 except Exception as e:
     logging.error(f"❌ Erreur import MFRC522 : {e}")
 
+# check if mpv is installed
+if not subprocess.run(["which", "mpv"], stdout=subprocess.DEVNULL).returncode == 0:
+    logging.error("❌ mpv n'est pas installé. Veuillez l'installer avec 'sudo apt install mpv'")
+    exit(1)
 
 continue_reading = True
-
-# 🔊 Config log
-logging.basicConfig(
-    filename="/home/yassin/rfid_player.log",
-    level=logging.DEBUG,
-    format='%(asctime)s %(levelname)s: %(message)s'
-)
 
 logging.info("🎬 Script RFID démarré")
 
