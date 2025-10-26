@@ -6,7 +6,7 @@ import subprocess
 import logging
 # 🔊 Config log
 logging.basicConfig(
-    filename="/home/yassin/rfid_player.log",
+    filename="~/rfid_player.log",
     level=logging.DEBUG,
     format='%(asctime)s %(levelname)s: %(message)s'
 )
@@ -45,7 +45,7 @@ if UID_STOP in UID_TO_TRACK.values():
     logging.error("❌ UID_STOP est présent dans UID_TO_TRACK.json, veuillez le retirer.")
     exit(1)
 
-audio_folder = "/home/yassin/Music"
+audio_folder = "~/Music"
 
 def end_read(signal, frame):
     global continue_reading
