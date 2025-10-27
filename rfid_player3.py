@@ -92,7 +92,7 @@ while continue_reading:
                         # Lecture avec mpv
                         logging.info("▶️ Appel à mpv")
                         audio_process = subprocess.Popen(
-                            ["mpv", "--no-video", "--no-terminal", "--really-quiet", "--", audio_path],
+                            ["mpv", "--no-video", "--no-terminal", "--really-quiet", audio_path],
                             stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL
                         )
