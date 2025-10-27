@@ -52,6 +52,28 @@ delai = 2
 
 audio_process = None
 
+
+def PlayAudio(audio_path):
+    global audio_process
+    if audio_process and audio_process.poll() is None:
+        audio_process.terminate()
+
+    # Volume (optionnel)
+    # try:
+    # subprocess.run(["amixer", "sset", "Master", "50%"], check=True)
+    # except Exception as e:
+    # logging.warning(f"Erreur volume (amixer) : {e}")
+
+    # Lecture avec mpv
+    logging.info("▶️ Appel à mpv")
+    audio_process = subprocess.Popen(
+        ["mpv", "--no-video", "--no-terminal", "--really-quiet", audio_path],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    logging.info("🎧 mpv lancé")
+
+
 while continue_reading:
     (status, TagType) = reader.MFRC522_Request(reader.PICC_REQIDL)
 
@@ -80,24 +102,12 @@ while continue_reading:
                     if os.path.exists(audio_path):
                         logging.info(f"🎵 Lecture du fichier : {audio_path}")
 
-                        if audio_process and audio_process.poll() is None:
-                            audio_process.terminate()
+                        PlayAudio(audio_path)
 
-                        # Volume (optionnel)
-                        # try:
-                            # subprocess.run(["amixer", "sset", "Master", "50%"], check=True)
-                        # except Exception as e:
-                            # logging.warning(f"Erreur volume (amixer) : {e}")
+                    elif 'http' in track_name or 'https' in track_name:
+                        logging.info(f"🌐 Lecture du flux en ligne : {track_name}")
 
-                        # Lecture avec mpv
-                        logging.info("▶️ Appel à mpv")
-                        audio_process = subprocess.Popen(
-                            ["mpv", "--no-video", "--no-terminal", "--really-quiet", audio_path],
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL
-                        )
-                        logging.info("🎧 mpv lancé")
-
+                        PlayAudio(track_name)
                     else:
                         logging.warning(f"Fichier introuvable : {audio_path}")
                 else:
