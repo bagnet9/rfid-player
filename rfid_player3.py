@@ -25,6 +25,7 @@ if not subprocess.run(["which", "mpv"], stdout=subprocess.DEVNULL).returncode ==
 
 continue_reading = True
 
+volume = 50
 logging.info("🎬 Script RFID démarré")
 
 UID_TO_TRACK = json.load(open("UID_TO_TRACK.json"))
@@ -58,16 +59,10 @@ def PlayAudio(audio_path):
     if audio_process and audio_process.poll() is None:
         audio_process.terminate()
 
-    # Volume (optionnel)
-    # try:
-    # subprocess.run(["amixer", "sset", "Master", "50%"], check=True)
-    # except Exception as e:
-    # logging.warning(f"Erreur volume (amixer) : {e}")
-
     # Lecture avec mpv
     logging.info("▶️ Appel à mpv")
     audio_process = subprocess.Popen(
-        ["mpv", "--no-video", "--no-terminal", "--really-quiet", audio_path],
+        ["mpv", "--no-video", "--no-terminal", "--really-quiet", f"--volume={volume}", audio_path],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
@@ -106,7 +101,7 @@ while continue_reading:
 
                     elif 'http' in track_name or 'https' in track_name:
                         logging.info(f"🌐 Lecture du flux en ligne : {track_name}")
-
+                        # TODO : cache the music for offline use
                         PlayAudio(track_name)
                     else:
                         logging.warning(f"Fichier introuvable : {audio_path}")
