@@ -92,7 +92,8 @@ while continue_reading:
 
                 elif uid_str in UID_TO_TRACK:
                     track_name = UID_TO_TRACK[uid_str]
-                    audio_path = os.path.join(audio_folder, track_name)
+                    track_name_clean = track_name.replace("/", "_").replace(":", "_")
+                    audio_path = os.path.join(audio_folder, track_name_clean)
 
                     if os.path.exists(audio_path):
                         logging.info(f"🎵 Lecture du fichier : {audio_path}")
@@ -102,8 +103,8 @@ while continue_reading:
                     elif 'http' in track_name or 'https' in track_name:
                         logging.info(f"🌐 Lecture du flux en ligne : {track_name}")
                         if not os.path.exists(audio_path):
-                            subprocess.run(["wget", "-O", audio_path, track_name])
-                        PlayAudio(track_name)
+                            subprocess.run(["wget", "-O", audio_path, track_name_clean])
+                        PlayAudio(audio_path)
                     else:
                         logging.warning(f"Fichier introuvable : {audio_path}")
                 else:
