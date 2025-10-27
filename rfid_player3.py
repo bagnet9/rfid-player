@@ -103,7 +103,7 @@ while continue_reading:
                     elif 'http' in track_name or 'https' in track_name:
                         logging.info(f"🌐 Lecture du flux en ligne : {track_name}")
                         if not os.path.exists(audio_path):
-                            subprocess.run(["wget", "-O", audio_path, track_name_clean])
+                            subprocess.run(["wget", "-O", audio_path, track_name])
                         PlayAudio(audio_path)
                     else:
                         logging.warning(f"Fichier introuvable : {audio_path}")
