@@ -1,6 +1,6 @@
 import os
 import mmap
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import json
 app = Flask(__name__)
 app.config['MUSIC_FOLDER'] = './Music'
@@ -30,8 +30,23 @@ def upload():
     """
     f = request.files['music_file']
     f.save(os.path.join(app.config['MUSIC_FOLDER'], f.filename))
-    return render_template('index.html')
+    return redirect('/')
 
+@app.route("/change_music",methods=['POST'])
+def change_music():
+    with open('shared_data.dat', 'r+b') as f:
+        with mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ) as mm:
+            mm.seek(0)
+            data = mm.readline().rstrip(b'\0')
+            print("uuid :" + data.decode('utf-8'))
+            selected_music = request.form['music_name']
+            with open('UID_TO_TRACK.json', 'r+') as json_file:
+                uid_to_track = json.load(json_file)
+                uid_to_track[data.decode('utf-8')] = selected_music
+                json_file.seek(0)
+                json.dump(uid_to_track, json_file)
+                json_file.truncate()
+    return redirect('/')
 # main driver function
 if __name__ == '__main__':
     # run() method of Flask class runs the application

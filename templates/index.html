@@ -298,9 +298,9 @@
         </div>
 
         <form action="/change_music" method="post" id="changeForm">
-            <select name="music_id" id="musicSelect">
+            <select name="music_name" id="musicSelect">
                 {% for music in musics %}
-                <option value="{{ music.id }}">{{ music }}</option>
+                <option value="{{ music }}">{{ music }}</option>
                 {% endfor %}
             </select>
             <button type="submit">Assign to Card</button>
