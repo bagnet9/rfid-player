@@ -6,7 +6,7 @@ app.config['MUSIC_FOLDER'] = './Music'
 @app.route('/')
 def main():
     with open('shared_data.dat', 'r+b') as f:
-        with mmap.mmap(f.fileno(), 10, access=mmap.ACCESS_READ) as mm:
+        with mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ) as mm:
             mm.seek(0)
             data = mm.readline().rstrip(b'\0')
             print("uuid :" + data.decode('utf-8'))

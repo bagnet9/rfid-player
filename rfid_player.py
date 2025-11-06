@@ -138,5 +138,5 @@ def handle_uid_detection(mm,f):
 with open('shared_data.dat', 'w+b') as f:
     f.write(b'\0' * 1024)
     f.flush()
-    with mmap.mmap(f.fileno(), 10) as mm:
+    with mmap.mmap(f.fileno(), 1024) as mm:
         handle_uid_detection(mm,f)
