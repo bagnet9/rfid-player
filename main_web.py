@@ -1,12 +1,15 @@
 import os
-
+import mmap
 from flask import Flask, render_template, request
-
 app = Flask(__name__)
 app.config['MUSIC_FOLDER'] = './Music'
 @app.route('/')
 def main():
-    return render_template('index.html')
+    with open('shared_data.dat', 'r+b') as f:
+        with mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ) as mm:
+            mm.seek(0)
+            data = mm.readline().rstrip(b'\0')
+            return render_template('index.html',uuid=data.decode('utf-8'))
 
 @app.route('/upload', methods=['POST'])
 def upload():
