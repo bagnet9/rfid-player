@@ -2,17 +2,349 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload music</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .section h2 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            font-size: 1.2em;
+        }
+
+        .upload-section {
+            border-color: #e8eaf6;
+        }
+
+        .upload-section h2::before {
+            content: '⬆️';
+        }
+
+        .card-info-section {
+            border-color: #fff3e0;
+            background: linear-gradient(135deg, #fff9f0 0%, #ffe8cc 100%);
+        }
+
+        .card-info-section h2 {
+            color: #e65100;
+        }
+
+        .card-info-section h2::before {
+            content: '🏷️';
+        }
+
+        .card-music-section {
+            border-color: #e1f5fe;
+        }
+
+        .card-music-section h2::before {
+            content: '🎶';
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .file-input-label:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-name {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            color: #667eea;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .current-music {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .no-music {
+            color: #999;
+            font-style: italic;
+        }
+
+        .card-id {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .card-id-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .section-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #667eea, transparent);
+            margin: 30px 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload Music File</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="music_file" accept=".mp3,.wav,.flac" required>
-        <button type="submit">Upload</button>
-    </form>
-<h1>Current uuid</h1>
-<pre>
-{{ uuid }}
-</pre>
+<div class="container">
+    <h1>🎧 RFID Music Player</h1>
+
+    <div class="section upload-section">
+        <h2>Upload New Music</h2>
+        <div class="section-description">
+            Add a new music file to your library
+        </div>
+        <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="file-input-wrapper">
+                <input type="file" name="music_file" id="musicFile" accept=".mp3,.wav,.flac" required>
+                <label for="musicFile" class="file-input-label">
+                    📁 Choose Music File
+                </label>
+            </div>
+            <div class="file-name" id="fileName">No file selected</div>
+            <button type="submit">Upload Music</button>
+        </form>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section card-info-section">
+        <h2>RFID Card</h2>
+        <div class="card-id">
+            <div class="card-id-label">CARD ID</div>
+            <div>{{ uuid }}</div>
+        </div>
+    </div>
+
+    <div class="section card-music-section">
+        <h2>Assign Music to This Card</h2>
+        <div class="section-description">
+            This card will play the selected music when scanned
+        </div>
+
+        <div class="current-music">
+            {% if music != "" %}
+            Currently Assigned: {{ music }}
+            {% else %}
+            <span class="no-music">No music assigned yet</span>
+            {% endif %}
+        </div>
+
+        <form action="/change_music" method="post" id="changeForm">
+            <select name="music_id" id="musicSelect">
+                {% for music in musics %}
+                <option value="{{ music.id }}">{{ music }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Assign to Card</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // File input display
+    const fileInput = document.getElementById('musicFile');
+    const fileNameDisplay = document.getElementById('fileName');
+
+    fileInput.addEventListener('change', function(e) {
+        if (this.files && this.files.length > 0) {
+            const fileName = this.files[0].name;
+            fileNameDisplay.textContent = `📄 ${fileName}`;
+            fileNameDisplay.style.color = '#4caf50';
+        } else {
+            fileNameDisplay.textContent = 'No file selected';
+            fileNameDisplay.style.color = '#999';
+        }
+    });
+
+    // Form submission feedback
+    const uploadForm = document.getElementById('uploadForm');
+    uploadForm.addEventListener('submit', function(e) {
+        const button = this.querySelector('button');
+        button.textContent = '⏳ Uploading...';
+        button.disabled = true;
+    });
+
+    const changeForm = document.getElementById('changeForm');
+    changeForm.addEventListener('submit', function(e) {
+        const button = this.querySelector('button');
+        button.textContent = '⏳ Assigning...';
+        button.disabled = true;
+    });
+
+    // Add animation on load
+    window.addEventListener('load', function() {
+        document.querySelectorAll('.section').forEach((section, index) => {
+            section.style.animation = `slideIn 0.5s ease-out ${index * 0.1}s both`;
+        });
+    });
+</script>
 </body>
 </html>
