@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.config['MUSIC_FOLDER'] = './Music'
 @app.route('/')
 def main():
-    return render_template('upload.html')
+    return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -15,7 +15,7 @@ def upload():
     """
     f = request.files['music_file']
     f.save(os.path.join(app.config['MUSIC_FOLDER'], f.filename))
-    return render_template('upload.html')
+    return render_template('index.html')
 
 # main driver function
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ import logging
 from mfrc522 import MFRC522
 import RPi.GPIO as GPIO
 import argparse
+import mmap
 # 🔊 Config log
 logging.basicConfig(
     filename="rfid_player.log",
@@ -83,6 +84,34 @@ def PlayAudio(audio_path):
     logging.info("🎧 mpv lancé")
 
 
+def StopSong():
+    global audio_process
+    if audio_process and audio_process.poll() is None:
+        logging.info("⏹️ Arrêt de la musique en cours")
+        audio_process.terminate()
+        audio_process = None
+    else:
+        logging.info("Aucune musique en cours à arrêter")
+
+
+def PlayTrack():
+    track_name = UID_TO_TRACK[uid_str]
+    track_name_clean = track_name.replace("/", "_").replace(":", "_")
+    audio_path = os.path.join(audio_folder, track_name_clean)
+    if os.path.exists(audio_path):
+        logging.info(f"🎵 Lecture du fichier : {audio_path}")
+        PlayAudio(audio_path)
+    else:
+        logging.warning(f"Fichier introuvable : {audio_path}")
+
+
+def WaitForRelease():
+    while True:
+        (status_check, _) = reader.MFRC522_Request(reader.PICC_REQIDL)
+        if status_check != reader.MI_OK:
+            break
+        time.sleep(0.1)
+
 
 while continue_reading:
     (status, TagType) = reader.MFRC522_Request(reader.PICC_REQIDL)
@@ -93,40 +122,10 @@ while continue_reading:
         if status == reader.MI_OK:
             uid_str = "".join(f"{x:02X}" for x in uid)
             logging.info(f"🎴 UID détecté : {uid_str}")
-
-            if uid_str != dernier_uid:
-                dernier_uid = uid_str
-
-                if uid_str == UID_STOP:
-                    if audio_process and audio_process.poll() is None:
-                        logging.info("⏹️ Arrêt de la musique en cours")
-                        audio_process.terminate()
-                        audio_process = None
-                    else:
-                        logging.info("Aucune musique en cours à arrêter")
-
-                elif uid_str in UID_TO_TRACK:
-                    track_name = UID_TO_TRACK[uid_str]
-                    track_name_clean = track_name.replace("/", "_").replace(":", "_")
-                    audio_path = os.path.join(audio_folder, track_name_clean)
-
-                    if os.path.exists(audio_path):
-                        logging.info(f"🎵 Lecture du fichier : {audio_path}")
-
-                        PlayAudio(audio_path)
-
-                    elif 'http' in track_name or 'https' in track_name:
-                        logging.info(f"🌐 Lecture du flux en ligne : {track_name}")
-                        # TODO : cache the music for offline use
-                        PlayAudio(track_name)
-                    else:
-                        logging.warning(f"Fichier introuvable : {audio_path}")
-                else:
-                    logging.warning(f"UID non reconnu : {uid_str}")
-
-                # Attendre que la carte soit retirée avant de continuer
-                while True:
-                    (status_check, _) = reader.MFRC522_Request(reader.PICC_REQIDL)
-                    if status_check != reader.MI_OK:
-                        break
-                    time.sleep(0.1)
+            if uid_str == UID_STOP:
+                StopSong()
+            elif uid_str in UID_TO_TRACK:
+                PlayTrack()
+            else:
+                logging.warning(f"UID non reconnu : {uid_str}")
+            WaitForRelease()
