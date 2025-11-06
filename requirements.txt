@@ -1,4 +1,3 @@
-mfrc522-python
 gunicorn
 Flask
 mmap
