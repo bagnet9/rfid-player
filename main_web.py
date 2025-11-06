@@ -9,6 +9,7 @@ def main():
         with mmap.mmap(f.fileno(), 1024, access=mmap.ACCESS_READ) as mm:
             mm.seek(0)
             data = mm.readline().rstrip(b'\0')
+            print("uuid :" + data.decode('utf-8'))
             return render_template('index.html',uuid=data.decode('utf-8'))
 
 @app.route('/upload', methods=['POST'])
