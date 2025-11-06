@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload music</title>
+</head>
+<body>
+    <h1>Upload Music File</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="music_file" accept=".mp3,.wav,.flac" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
