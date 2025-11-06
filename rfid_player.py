@@ -17,6 +17,21 @@ logging.basicConfig(
 logging.info("🔍 DÉBUT DU SCRIPT PYTHON")
 
 logging.info("🚀 Script RFID lancé via systemd")
+"""
+argument :
+--volume : volume de lecture (0-100)
+--print_logs : afficher les logs dans la console
+"""
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--volume", type=int, default=50)
+parser.add_argument("--print_logs", action="store_true")
+args = parser.parse_args()
+volume = args.volume
+if args.print_logs:
+    logging.getLogger().setLevel(logging.INFO)
+    # set logging output to both file and console
+    logging.getLogger().addHandler(logging.StreamHandler())
 
 # check if mpv is installed
 if not subprocess.run(["which", "mpv"], stdout=subprocess.DEVNULL).returncode == 0:
@@ -25,7 +40,6 @@ if not subprocess.run(["which", "mpv"], stdout=subprocess.DEVNULL).returncode ==
 
 continue_reading = True
 
-volume = 50
 logging.info("🎬 Script RFID démarré")
 
 UID_TO_TRACK = json.load(open("UID_TO_TRACK.json"))
@@ -68,21 +82,7 @@ def PlayAudio(audio_path):
     )
     logging.info("🎧 mpv lancé")
 
-"""
-argument :
---volume : volume de lecture (0-100)
---print_logs : afficher les logs dans la console
-"""
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--volume", type=int, default=50)
-parser.add_argument("--print_logs", action="store_true")
-args = parser.parse_args()
-volume = args.volume
-if args.print_logs:
-    logging.getLogger().setLevel(logging.INFO)
-    # set logging output to both file and console
-    logging.getLogger().addHandler(logging.StreamHandler())
 
 while continue_reading:
     (status, TagType) = reader.MFRC522_Request(reader.PICC_REQIDL)
