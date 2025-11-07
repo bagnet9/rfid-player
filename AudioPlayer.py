@@ -3,8 +3,6 @@ import logging
 import os
 import subprocess
 
-from rfid_player import audio_folder
-
 
 class AudioPlayer:
     def __init__(self,audio_folder="Music", uid_stop="A079401F86"):
@@ -43,7 +41,7 @@ class AudioPlayer:
 
     def play_track(self,track_name):
         track_name_clean = track_name.replace("/", "_").replace(":", "_")
-        audio_path = os.path.join(audio_folder, track_name_clean)
+        audio_path = os.path.join(self.audio_folder, track_name_clean)
         if os.path.exists(audio_path):
             logging.info(f"🎵 Lecture du fichier : {audio_path}")
             self.play_audio(audio_path)
