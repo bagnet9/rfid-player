@@ -345,6 +345,20 @@
             section.style.animation = `slideIn 0.5s ease-out ${index * 0.1}s both`;
         });
     });
+  // check if the return of /check_uuid is the same as the uuid in the html
+    const uuid = "{{ uuid }}";
+    setInterval(() => {
+        fetch('/check_uuid')
+            .then(response => response.text())
+            .then(data => {
+                const checkUuid = data.trim();
+                console.log('checkUuid:', checkUuid);
+                console.log('uuid:', uuid);
+                if (uuid !== checkUuid) {
+                    location.reload();
+                }
+            });
+    }, 1000);
 </script>
 </body>
 </html>
