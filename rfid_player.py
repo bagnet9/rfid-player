@@ -47,9 +47,8 @@ def main():
     try:
         audio_player = AudioPlayer(audio_folder, UID_STOP)
         rfid_reader = RFIDReader()
-        UID_TO_TRACK = audio_player.get_tracks()
-
         def on_uid_detected(uid_str):
+            UID_TO_TRACK = audio_player.get_tracks()
             if uid_str == UID_STOP:
                 audio_player.stop_song()
             elif uid_str in UID_TO_TRACK:
