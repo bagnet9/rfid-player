@@ -1,9 +1,7 @@
 import logging
 import mmap
 import time
-
 from mfrc522 import MFRC522
-from rfid_player import stop_event
 import RPi.GPIO as GPIO
 
 
@@ -15,6 +13,7 @@ class RFIDReader:
         self.shared_data.flush()
         self.mm = mmap.mmap(self.shared_data.fileno(), 1024)
         self.readCallback = None
+        self.stop_event = None
         try:
             self.reader = MFRC522()
         except Exception as e:
@@ -46,7 +45,7 @@ class RFIDReader:
         return None
 
     def handle_uid_detection(self):
-        while not stop_event.is_set():
+        while not self.stop_event.is_set():
             uid_str = self.read_uid()
             if not uid_str:
                 self.wait_for_release()

@@ -52,6 +52,7 @@ def main():
             logging.warning(f"UID non reconnu : {uid_str}")
             rfid_reader.wait_for_release()
     rfid_reader.readCallback = on_uid_detected
+    rfid_reader.stop_event = stop_event
     rfid_reader.handle_uid_detection()
     # after loop ends -> perform cleanup once
     audio_player.close()
