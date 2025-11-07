@@ -11,16 +11,23 @@ class AudioPlayer:
         self.audio_process = None
 
     def get_tracks(self):
-        tracks = json.load(open("UID_TO_TRACK.json"))
-        # check that UID_STOP is not in UID_TO_TRACK
-        if self.uid_stop in tracks.values():
+        with open('UID_TO_TRACK.json', 'r', encoding='utf-8') as f:
+            tracks = json.load(f)
+        # UIDs are usually keys in the mapping
+        if self.uid_stop in tracks:
             logging.error("❌ UID_STOP est présent dans UID_TO_TRACK.json, veuillez le retirer.")
             exit(1)
         return tracks
 
     def play_audio(self,audio_path):
         if self.audio_process and self.audio_process.poll() is None:
+            logging.info("Terminating existing mpv process")
             self.audio_process.terminate()
+            try:
+                self.audio_process.wait(timeout=2)
+            except Exception:
+                logging.info("Killing mpv process")
+                self.audio_process.kill()
 
         # Lecture avec mpv
         logging.info("▶️ Appel à mpv")
@@ -35,6 +42,10 @@ class AudioPlayer:
         if self.audio_process and self.audio_process.poll() is None:
             logging.info("⏹️ Arrêt de la musique en cours")
             self.audio_process.terminate()
+            try:
+                self.audio_process.wait(timeout=2)
+            except Exception:
+                self.audio_process.kill()
             self.audio_process = None
         else:
             logging.info("Aucune musique en cours à arrêter")
@@ -51,3 +62,8 @@ class AudioPlayer:
     def close(self):
         if self.audio_process and self.audio_process.poll() is None:
             self.audio_process.terminate()
+            try:
+                self.audio_process.wait(timeout=2)
+            except Exception:
+                self.audio_process.kill()
+            self.audio_process = None
