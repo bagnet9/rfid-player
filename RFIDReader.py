@@ -20,6 +20,7 @@ class RFIDReader:
                 cur = f.tell()
                 if cur < self.size:
                     f.write(b'\0' * (self.size - cur))
+        self.shared_data = open(self.shared_path, 'r+b')
         self.mm = mmap.mmap(self.shared_data.fileno(), 1024)
         self.readCallback = None
         self.stop_event = None
