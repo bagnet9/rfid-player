@@ -24,7 +24,7 @@ class AudioPlayer:
 
         # Lecture avec mpv
         logging.info("▶️ Appel à mpv")
-        audio_process = subprocess.Popen(
+        self.audio_process = subprocess.Popen(
             ["mpv", "--no-video", "--no-terminal", "--really-quiet", f"--volume={os.environ["VOLUME"]}", audio_path],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
