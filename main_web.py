@@ -57,8 +57,24 @@ def change_music():
                 json.dump(uid_to_track, json_file)
                 json_file.truncate()
     return redirect('/')
+def initialize_files():
+    """Initialize required files if they don't exist."""
+    # Create shared_data.dat if it doesn't exist
+    if not os.path.exists('shared_data.dat'):
+        with open('shared_data.dat', 'wb') as f:
+            f.write(b'\0' * 1024)
+    
+    # Create UID_TO_TRACK.json if it doesn't exist
+    if not os.path.exists('UID_TO_TRACK.json'):
+        with open('UID_TO_TRACK.json', 'w') as f:
+            json.dump({}, f)
+    
+    # Create Music folder if it doesn't exist
+    if not os.path.exists(app.config['MUSIC_FOLDER']):
+        os.makedirs(app.config['MUSIC_FOLDER'])
 # main driver function
 if __name__ == '__main__':
+    initialize_files()  # Call before running the app
     # run() method of Flask class runs the application
     # on the local development server.
     app.run(host='0.0.0.0',port=8080,debug=True)
